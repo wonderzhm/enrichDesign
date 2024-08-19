@@ -1,7 +1,8 @@
-#' Get combination test statistic value
+#' Get test statistic value using independent incremental approach
 #'
+#' This function is part of the function \link{getOC_ph23_ii}
 #' @param dat A time-to-event dataset returned from \link{sim_ph23}.
-#' @param w Weights (w1, w2) used in combination test.
+#' @param w weight parameter for stage 1 data.
 #' @param selected The selected dose level.
 #' @param targetEvents The target number of events from both stages at which analysis is to be made.
 #' @param test.method The method for getting adjusted p-value: \code{"dunnett"} or \code{"simes"}.
@@ -13,19 +14,16 @@
 #'
 #' @examples
 #' d <- sim_ph23(n1_per_arm = 20, n2_per_arm = 30)
-#' getZstat(d, w=c(0.8, sqrt(1-0.8^2)), selected = 2, targetEvents = 25, test.method="dunnett")
-getZstat <- function(dat, w, selected, targetEvents, test.method = "dunnett"){
+#' getZ1(d, selected = 2, targetEvents = 25, test.method="dunnett")
+getZ1 <- function(dat, w = NULL, selected = 1, targetEvents, test.method = "dunnett"){
   num_trt <- length(unique(dat$trt)) - 1
-  # cut data
-  d <- dat %>% filter(.data$trt%in%c(0, selected))
-  dIA <- cut_by_event(d, targetEvents = targetEvents)
-  IA_time <- dIA$calendarCutoff[1]
   # stage 1:
-  d1 <- dat %>% filter(.data$stage==1)
-  d1IA <- cut_by_date(d1, cut_time = IA_time)
+  d1 <- dat %>% filter(.data$stage==1);
+  IAd_time <- max(d1$enterTime) + 1e-10
+  d1IAd <- cut_by_date(d1, cut_time = IAd_time)
   pvalues <- rep(NA, num_trt)
   for(i in 1:num_trt){
-    d1IAi <- d1IA %>% filter(.data$trt%in%c(0, i))
+    d1IAi <- d1IAd %>% filter(.data$trt%in%c(0, i))
     res <- nph::logrank.test(time = d1IAi$survTimeCut, event = d1IAi$eventCut,
                              group = as.factor(d1IAi$trt), alternative = c("greater"),
                              rho = 0, gamma = 0, event_time_weights = NULL)
@@ -45,19 +43,28 @@ getZstat <- function(dat, w, selected, targetEvents, test.method = "dunnett"){
   }else{
     padjusted <- getPvals.simes(g=g, w=weights, p=pvalues, selected = selected)
   }
-  d1IAselected <- d1IA %>% filter(.data$trt%in%c(0, selected))
-  obsEventsIA_1 <- sum(d1IAselected$eventCut)
-  # stage 2:
-  d2IA <- dIA %>% filter(.data$stage==2)
-  res <- nph::logrank.test(time = d2IA$survTimeCut, event = d2IA$eventCut,
-                           group = as.factor(d2IA$trt), alternative = c("greater"),
+  d1IAd_selected <- d1IAd %>% filter(.data$trt%in%c(0, selected))
+  obsEventsIAd <- sum(d1IAd_selected$eventCut)
+  Zd_tilde <- qnorm(1-max(padjusted))
+  Zd <- qnorm(1-pvalues[selected])
+  # stage 2: include selected arm and control from both stages
+  d <- dat %>% filter(.data$trt%in%c(0, selected))
+  dIA1 <- cut_by_event(d, targetEvents = targetEvents)
+  IA1_time <- dIA1$calendarCutoff[1]
+  obsEventsIA1 <- sum(dIA1$eventCut)
+  res <- nph::logrank.test(time = dIA1$survTimeCut, event = dIA1$eventCut,
+                           group = as.factor(dIA1$trt), alternative = c("greater"),
                            rho = 0, gamma = 0, event_time_weights = NULL)
-  qadjusted <- rep(res$test$p, length(padjusted))
-  # p-value combination
-  z_IA <- min(w[1]*qnorm(1-padjusted)+w[2]*qnorm(1-qadjusted))
+  Z1 <- res$test$z
+  # combine using independent incremental
+  if(is.null(w)) w <- sqrt(obsEventsIAd/obsEventsIA1)
+  Z1_tilde <- w*Zd_tilde + sqrt(1-w^2)*(sqrt(obsEventsIA1)*Z1-sqrt(obsEventsIAd)*Zd)/
+    sqrt(obsEventsIA1-obsEventsIAd)
+  #Z1_tilde <- Z1 + sqrt(obsEventsIAd/obsEventsIA1)*(Zd_tilde-Zd)
   # sample size
-  sample_size <- nrow(d1IA) + nrow(d2IA)
+  d2IA1 <- dIA1 %>% filter(.data$stage==2)
+  sample_size <- nrow(d1IAd) + nrow(d2IA1)
   # resulted test statistic
-  return(list(z=z_IA, obsEvents_stage1 = obsEventsIA_1,
-              cut_time = IA_time, sample_size = sample_size))
+  return(list(Z1_tilde = Z1_tilde, Z1 = Z1, obsEventsIAd = obsEventsIAd, obsEventsIA1 = obsEventsIA1,
+              cut_time = IA1_time, sample_size = sample_size))
 }

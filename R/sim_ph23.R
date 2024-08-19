@@ -30,6 +30,7 @@
 #' @importFrom dplyr mutate
 #' @importFrom stats pnorm qnorm rexp
 #' @importFrom simtrial rpwexp_enroll
+#' @importFrom mvtnorm rmvnorm
 #' @export
 #'
 #' @examples
@@ -45,7 +46,7 @@ sim_ph23 <- function(hazardC = 0.1, hazardT = c(0.09, 0.08, 0.07),
   n_per_arm <- n1_per_arm + n2_per_arm
   trt <- rep(0:num_trt, each = n_per_arm)
   ntotal <- length(trt)
-  z <- MASS::mvrnorm(ntotal, mu = c(0,0), Sigma = matrix(c(1, rho, rho, 1), 2, 2))
+  z <- rmvnorm(n=ntotal, mean=c(0,0), sigma=matrix(c(1, rho, rho, 1), 2, 2))
   z_surv <- z[,1]
   z_orr <- z[,2]
   exp_rates <- rep(c(hazardC, hazardT), each = n_per_arm)
@@ -76,11 +77,11 @@ sim_ph23 <- function(hazardC = 0.1, hazardT = c(0.09, 0.08, 0.07),
   enroll_time[stage2.indx] <- sample(stage2.enroll)
 
   ## Combine the data
-  dat <- data.frame(stage = stage, trt = trt, response = response, enterTime = enroll_time,
+  d <- data.frame(stage = stage, trt = trt, response = response, enterTime = enroll_time,
                     surv_time = surv_time, cen_time = cen_time) %>%
     mutate(survTime = ifelse(surv_time<=cen_time, surv_time, cen_time)) %>%
     mutate(calendarTime = .data$enterTime + .data$survTime) %>%
     mutate(event = ifelse(surv_time<=cen_time, 1, 0)) %>%
     dplyr::select(-surv_time, -cen_time)
-  return(dat)
+  return(d)
 }

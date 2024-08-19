@@ -2,6 +2,23 @@
 #' @importFrom mvtnorm pmvnorm
 #' @importFrom stats qnorm
 
+## non-selected arms will be cut at dose selection time
+cut_nonselected_arms <- function(dat, selected, nonselected_max_followup=NULL){
+  d1 <- dat %>% filter(.data$stage==1)
+  if(is.null(nonselected_max_followup)){
+    nonselected_max_followup <- max(d1$enterTime) + 1e-10
+  }
+  d1nonselected <- d1 %>% filter(!(.data$trt%in%c(0, selected)))
+  dremaining <- dat %>% filter((.data$trt%in%c(0, selected)))
+  d1nonselected_cut <- cut_by_date(d1nonselected, nonselected_max_followup)
+  d1nonselected$survTime <- d1nonselected_cut$survTimeCut
+  d1nonselected$event <- d1nonselected_cut$eventCut
+  d1nonselected$calendarTime <- d1nonselected$enterTime + d1nonselected$survTime
+  dat_cut <- dplyr::bind_rows(d1nonselected, dremaining)
+  return(dat_cut)
+}
+
+
 # Get p-values for simes' method
 getPvals.simes <- function(g, w, p, selected){
   n <- length(p)
