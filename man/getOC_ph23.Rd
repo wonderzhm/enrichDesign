@@ -9,6 +9,7 @@ getOC_ph23(
   seed = 2024,
   nsim = 1000,
   test.method = "dunnett",
+  approach = "disjoint",
   hazardC = 0.1,
   hazardT = c(0.1, 0.1, 0.1),
   orrC = 0.2,
@@ -22,12 +23,10 @@ getOC_ph23(
   n2_per_arm = 150,
   targetEventsIA_all = 240,
   targetEventsFA_all = 320,
-  wei_IA = c(0.8, 0.6),
-  wei_FA = c(0.8, 0.6),
-  bound_z_IA = 2.44,
-  bound_z_FA = 2,
+  w = NULL,
+  bound_z = c(2.44, 2),
   alpha = 0.025,
-  update_bound_FA = TRUE,
+  update_bound = TRUE,
   nonselected_max_followup = NULL,
   dose_selection_endpoint = "ORR"
 )
@@ -40,6 +39,11 @@ getOC_ph23(
 \item{nsim}{number of replicates}
 
 \item{test.method}{method for getting adjusted p-value: \code{"dunnett"} or \code{"simes"}.}
+
+\item{approach}{approach for combining data:
+\code{"disjoint"}: disjoint-subjects approach;
+\code{"ii"}: independent incremental approach;
+\code{"hybrid"}: disjoint-subjects at IA and independent incremental thereafter.}
 
 \item{hazardC}{hazard rate for control arm}
 
@@ -67,17 +71,14 @@ getOC_ph23(
 
 \item{targetEventsFA_all}{target number of events at FA for all subjects from both stage 1 and 2.}
 
-\item{wei_IA}{weights (w1, w2) used in combination test at IA.}
+\item{w}{weights parameter for stage 1 data: for independent incremental approach, it will be length of 1;
+for the disjoint-subjects approach, it will be length of 2 for IA and FA.}
 
-\item{wei_FA}{weights (w1, w2) used in combination test at IA.}
-
-\item{bound_z_IA}{z-scale rejection boundary at IA.}
-
-\item{bound_z_FA}{z-scale rejection boundary at FA.}
+\item{bound_z}{z-scale rejection boundaries and IA and FA.}
 
 \item{alpha}{Type I error, always one-sided.}
 
-\item{update_bound_FA}{whether to re-calculate the FA rejection boundary using the updated
+\item{update_bound}{whether to re-calculate the FA rejection boundary using the updated
 correlation between IA and FA test statistics.}
 
 \item{nonselected_max_followup}{The final data cutoff time for non-selected arms.

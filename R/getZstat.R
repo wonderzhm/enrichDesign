@@ -1,7 +1,7 @@
-#' Get combination test statistic value
+#' Get combination test statistic value using disjoint-subjects approach
 #'
 #' @param dat A time-to-event dataset returned from \link{sim_ph23}.
-#' @param w Weights (w1, w2) used in combination test.
+#' @param w weight parameter for stage 1 data.
 #' @param selected The selected dose level.
 #' @param targetEvents The target number of events from both stages at which analysis is to be made.
 #' @param test.method The method for getting adjusted p-value: \code{"dunnett"} or \code{"simes"}.
@@ -13,13 +13,18 @@
 #'
 #' @examples
 #' d <- sim_ph23(n1_per_arm = 20, n2_per_arm = 30)
-#' getZstat(d, w=c(0.8, sqrt(1-0.8^2)), selected = 2, targetEvents = 25, test.method="dunnett")
-getZstat <- function(dat, w, selected, targetEvents, test.method = "dunnett"){
+#' getZstat(d, w=0.8, selected = 2, targetEvents = 25, test.method="dunnett")
+getZstat <- function(dat, w = NULL, selected, targetEvents, test.method = "dunnett"){
   num_trt <- length(unique(dat$trt)) - 1
   # cut data
   d <- dat %>% filter(.data$trt%in%c(0, selected))
   dIA <- cut_by_event(d, targetEvents = targetEvents)
+  res <- nph::logrank.test(time = dIA$survTimeCut, event = dIA$eventCut,
+                           group = as.factor(dIA$trt), alternative = c("greater"),
+                           rho = 0, gamma = 0, event_time_weights = NULL)
+  ZIA <- res$test$z # non-adjusted Z statistic
   IA_time <- dIA$calendarCutoff[1]
+  obsEventsIA <- sum(dIA$eventCut)
   # stage 1:
   d1 <- dat %>% filter(.data$stage==1)
   d1IA <- cut_by_date(d1, cut_time = IA_time)
@@ -47,17 +52,20 @@ getZstat <- function(dat, w, selected, targetEvents, test.method = "dunnett"){
   }
   d1IAselected <- d1IA %>% filter(.data$trt%in%c(0, selected))
   obsEventsIA_1 <- sum(d1IAselected$eventCut)
+  ZIA_1 <- qnorm(1-max(padjusted)) # adjusted Z statistic for stage 1 subjects
   # stage 2:
   d2IA <- dIA %>% filter(.data$stage==2)
   res <- nph::logrank.test(time = d2IA$survTimeCut, event = d2IA$eventCut,
                            group = as.factor(d2IA$trt), alternative = c("greater"),
                            rho = 0, gamma = 0, event_time_weights = NULL)
-  qadjusted <- rep(res$test$p, length(padjusted))
+  ZIA_2 <- res$test$z # Z statistics for stage 2 subjects, no adjustment needed
   # p-value combination
-  z_IA <- min(w[1]*qnorm(1-padjusted)+w[2]*qnorm(1-qadjusted))
+  if(is.null(w)) w <- sqrt(obsEventsIA_1/obsEventsIA)
+  ZIA_tilde <- w*ZIA_1 + sqrt(1-w^2)*ZIA_2
   # sample size
   sample_size <- nrow(d1IA) + nrow(d2IA)
   # resulted test statistic
-  return(list(z=z_IA, obsEvents_stage1 = obsEventsIA_1,
+  return(list(Z_tilde = ZIA_tilde, Z = ZIA, obsEvents_stage1 = obsEventsIA_1,
+              obsEvents_all = obsEventsIA, w = w,
               cut_time = IA_time, sample_size = sample_size))
 }

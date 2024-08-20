@@ -1,6 +1,5 @@
 #' Get test statistic value using independent incremental approach
 #'
-#' This function is part of the function \link{getOC_ph23_ii}
 #' @param dat A time-to-event dataset returned from \link{sim_ph23}.
 #' @param w weight parameter for stage 1 data.
 #' @param selected The selected dose level.
@@ -65,6 +64,6 @@ getZ1 <- function(dat, w = NULL, selected = 1, targetEvents, test.method = "dunn
   d2IA1 <- dIA1 %>% filter(.data$stage==2)
   sample_size <- nrow(d1IAd) + nrow(d2IA1)
   # resulted test statistic
-  return(list(Z1_tilde = Z1_tilde, Z1 = Z1, obsEventsIAd = obsEventsIAd, obsEventsIA1 = obsEventsIA1,
-              cut_time = IA1_time, sample_size = sample_size))
+  return(list(Z_tilde = Z1_tilde, Z = Z1, obsEvents_all = obsEventsIA1,
+              w = w, cut_time = IA1_time, sample_size = sample_size))
 }

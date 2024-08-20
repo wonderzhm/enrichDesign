@@ -2,14 +2,14 @@
 % Please edit documentation in R/getZstat.R
 \name{getZstat}
 \alias{getZstat}
-\title{Get combination test statistic value}
+\title{Get combination test statistic value using disjoint-subjects approach}
 \usage{
-getZstat(dat, w, selected, targetEvents, test.method = "dunnett")
+getZstat(dat, w = NULL, selected, targetEvents, test.method = "dunnett")
 }
 \arguments{
 \item{dat}{A time-to-event dataset returned from \link{sim_ph23}.}
 
-\item{w}{Weights (w1, w2) used in combination test.}
+\item{w}{weight parameter for stage 1 data.}
 
 \item{selected}{The selected dose level.}
 
@@ -22,9 +22,9 @@ It returns a list including \code{z} the test statistic, \code{obsEvents_stage1}
 observed number of events from stage 1 and \code{cut_time} the data cut time.
 }
 \description{
-Get combination test statistic value
+Get combination test statistic value using disjoint-subjects approach
 }
 \examples{
 d <- sim_ph23(n1_per_arm = 20, n2_per_arm = 30)
-getZstat(d, w=c(0.8, sqrt(1-0.8^2)), selected = 2, targetEvents = 25, test.method="dunnett")
+getZstat(d, w=0.8, selected = 2, targetEvents = 25, test.method="dunnett")
 }

@@ -1,7 +1,7 @@
 Package: Phase23Dose
 Type: Package
 Title: Inferential Seamless Phase 2/3 Design for Oncology Dose Optimization Trials
-Version: 0.1.1
+Version: 0.1.2
 Author: Haiming Zhou and Philip He
 Maintainer: Haiming Zhou <haiming2019@gmail.com>
 Description: Provide design parameters and operating characteristics for inferential seamless phase 2/3 oncology dose optimization trials.

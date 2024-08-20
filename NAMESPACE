@@ -3,7 +3,6 @@
 export(cut_by_date)
 export(cut_by_event)
 export(getOC_ph23)
-export(getOC_ph23_ii)
 export(getZ1)
 export(getZstat)
 export(sim_ph23)

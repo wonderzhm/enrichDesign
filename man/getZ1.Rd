@@ -22,7 +22,7 @@ It returns a list including \code{z} the test statistic, \code{obsEvents_stage1}
 observed number of events from stage 1 and \code{cut_time} the data cut time.
 }
 \description{
-This function is part of the function \link{getOC_ph23_ii}
+Get test statistic value using independent incremental approach
 }
 \examples{
 d <- sim_ph23(n1_per_arm = 20, n2_per_arm = 30)
