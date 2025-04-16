@@ -1,6 +1,6 @@
 #' Cut a dataset for analysis at a specified event count
 #'
-#' @param data A time-to-event dataset returned from \link{sim_ph23}.
+#' @param data A time-to-event dataset returned from \link{simu_enrich_trial}.
 #' @param targetEvents Event count at which data cutoff is to be made.
 #'
 #' @return A data frame ready for survival analysis including columns \code{calendarCutoff},
@@ -8,7 +8,7 @@
 #' @export
 #'
 #' @examples
-#' d <- sim_ph23(n1_per_arm = 20, n2_per_arm = 30)
+#' d <- simu_enrich_trial(n = 100, prop_S = 0.5, ratio = 1)
 #' dcut <- cut_by_event(d, 10)
 cut_by_event <- function (data, targetEvents) {
   data0 = data

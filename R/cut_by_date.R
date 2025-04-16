@@ -1,6 +1,6 @@
 #' Cut a dataset for analysis at a specified date
 #'
-#' @param data A time-to-event dataset returned from \link{sim_ph23}.
+#' @param data A time-to-event dataset returned from \link{simu_enrich_trial}.
 #' @param cut_time Date relative to start of randomization (\code{calendarTime} from
 #' input dataset) at which dataset is to be cut off for analysis.
 
@@ -10,7 +10,7 @@
 #' @export
 #'
 #' @examples
-#' d <- sim_ph23(n1_per_arm = 20, n2_per_arm = 30)
+#' d <- simu_enrich_trial(n = 100, prop_S = 0.5, ratio = 1)
 #' dcut <- cut_by_date(d, 10)
 cut_by_date <- function (data, cut_time) {
   data0 = data

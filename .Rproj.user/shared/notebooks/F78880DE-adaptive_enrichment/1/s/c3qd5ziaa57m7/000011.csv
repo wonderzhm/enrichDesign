@@ -1,0 +1,8 @@
+"0","d_power <- getPowerSurvival(alpha = 0.025, sided = 1, hazardRatio = 0.7, maxNumberOfEvents = 280, "
+"0","                            lambda2 = log(2) / 10, accrualTime = c(0, 20), accrualIntensity = 400/20,"
+"0","                            directionUpper = FALSE)"
+"0","d_power$overallReject"
+"1","[1]"
+"1"," 0.8471279"
+"1","
+"

@@ -7,7 +7,7 @@
 cut_by_event(data, targetEvents)
 }
 \arguments{
-\item{data}{A time-to-event dataset returned from \link{sim_ph23}.}
+\item{data}{A time-to-event dataset returned from \link{simu_enrich_trial}.}
 
 \item{targetEvents}{Event count at which data cutoff is to be made.}
 }
@@ -19,6 +19,6 @@ A data frame ready for survival analysis including columns \code{calendarCutoff}
 Cut a dataset for analysis at a specified event count
 }
 \examples{
-d <- sim_ph23(n1_per_arm = 20, n2_per_arm = 30)
+d <- simu_enrich_trial(n = 100, prop_S = 0.5, ratio = 1)
 dcut <- cut_by_event(d, 10)
 }

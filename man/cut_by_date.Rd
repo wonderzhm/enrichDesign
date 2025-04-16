@@ -7,7 +7,7 @@
 cut_by_date(data, cut_time)
 }
 \arguments{
-\item{data}{A time-to-event dataset returned from \link{sim_ph23}.}
+\item{data}{A time-to-event dataset returned from \link{simu_enrich_trial}.}
 
 \item{cut_time}{Date relative to start of randomization (\code{calendarTime} from
 input dataset) at which dataset is to be cut off for analysis.}
@@ -20,6 +20,6 @@ A data frame ready for survival analysis including columns \code{calendarCutoff}
 Cut a dataset for analysis at a specified date
 }
 \examples{
-d <- sim_ph23(n1_per_arm = 20, n2_per_arm = 30)
+d <- simu_enrich_trial(n = 100, prop_S = 0.5, ratio = 1)
 dcut <- cut_by_date(d, 10)
 }
