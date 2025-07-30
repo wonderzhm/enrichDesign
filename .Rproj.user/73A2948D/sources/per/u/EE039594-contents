@@ -1,0 +1,6 @@
+seed = seed; nsim = nsim_per_cluster; n = nF; prop_S = pr; 
+duration = accrual_duration; targetEvents.S = targetEvents_S; 
+HR.Sc.threshold = HR.Sc.threshold; HR.S.threshold = HR.S.threshold;
+HR.F.threshold = HR.F.threshold; hazard_S = log(2)/c(medS_con, medS_con/hrS); 
+hazard_Sc = log(2)/c(medSc_con, medSc_con/hrSc); dropout_S = c(0, 0); 
+dropout_Sc = c(0, 0); w = 1; ratio = 1; alpha = alpha

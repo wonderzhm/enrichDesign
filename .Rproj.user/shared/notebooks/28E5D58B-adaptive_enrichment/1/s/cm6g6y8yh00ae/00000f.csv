@@ -1,0 +1,49 @@
+"0","rm(list=ls())"
+"0","#library(devtools)"
+"0","# devtools::install_github(""wonderzhm/enrichDesign"")"
+"0","library(knitr)"
+"2","Warning: package ‘knitr’ was built under R version 4.4.3"
+"0","library(gsDesign)"
+"2","Warning: package ‘gsDesign’ was built under R version 4.4.3"
+"0","library(dplyr)"
+"2","Warning: package ‘dplyr’ was built under R version 4.4.2"
+"2","
+Attaching package: ‘dplyr’
+
+"
+"2","The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+"
+"2","The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+"
+"0","library(rpact)"
+"2","Warning: package ‘rpact’ was built under R version 4.4.3"
+"2","Installation qualification for rpact 4.2.0 has not yet been performed.
+"
+"2","Please run testPackage() before using the package in GxP relevant environments.
+"
+"2","
+Attaching package: ‘rpact’
+
+"
+"2","The following object is masked from ‘package:knitr’:
+
+    kable
+
+"
+"0","library(ggplot2)"
+"0","library(ggh4x)"
+"0","library(ggpubr)"
+"0","library(scales)"
+"0","library(parallel)"
+"0","library(doParallel)"
+"2","Loading required package: foreach
+"
+"2","Loading required package: iterators
+"
+"0","library(enrichDesign)"

@@ -12,6 +12,7 @@
 #' d <- simu_enrich_trial(n = 200, prop_S = 0.5, duration = 10)
 #' getZstats(d, targetEvents.S = c(28, 70))
 getZstats <- function(dat, targetEvents.S){
+  targetEvents.S <- ceiling(targetEvents.S)
   ## three datasets
   dS <- dat %>% filter(.data$subgroup==1)
   dSc <- dat %>% filter(.data$subgroup==0)

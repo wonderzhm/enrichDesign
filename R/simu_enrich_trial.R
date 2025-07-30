@@ -31,12 +31,12 @@ simu_enrich_trial <- function(n = 100, prop_S = 0.5, ratio = 1, duration = 5,
                               hazard_S = c(0.1, 0.07), hazard_Sc = c(0.11, 0.088),
                               dropout_S = c(0, 0), dropout_Sc = c(0, 0), w = 1){
   ## preparation
-  nS <- n*prop_S
+  nS <- round(n*prop_S)
   nSc <- n - nS
   r <- ratio/(ratio+1)
-  nS_trt <- nS*r
+  nS_trt <- round(nS*r)
   nS_con <- nS - nS_trt
-  nSc_trt <- nSc*r
+  nSc_trt <- round(nSc*r)
   nSc_con <- nSc - nSc_trt
   ## simulate for S and control
   dS_con <- simu_single_arm(n = nS_con, duration = duration, hazard = hazard_S[1],
